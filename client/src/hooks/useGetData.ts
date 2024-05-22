@@ -7,7 +7,7 @@ export const useGetData = (endpoint: string) => {
   useEffect(() => {
     setIsLoading(true);
 
-    fetch(endpoint)
+    fetch(endpoint, { credentials: "include" })
       .then((res) => {
         if (res.ok) {
           return res.json();

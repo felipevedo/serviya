@@ -16,6 +16,7 @@ export const Login = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(data),
     })
       .then((res) => (res.ok ? res.json() : {}))

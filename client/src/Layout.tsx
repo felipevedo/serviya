@@ -1,7 +1,14 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useGetData } from "./hooks/useGetData";
+import { API_URL } from "./utils/constants";
 
 export const Layout = () => {
+  const { isLoading: isLoadingLoginStatus, data } = useGetData(
+    `${API_URL}/login/status`
+  );
+  const loginStatus = data[0];
   const underlineActive = ({ isActive }) => (isActive ? "underline" : "");
+
   return (
     <div>
       <header className="px-2 flex h-[60px] w-full items-center justify-between text-orange-500 font-bold">
@@ -23,9 +30,23 @@ export const Layout = () => {
         <div className="justify-self-end flex flex-col items-center">
           <h4 className="underline">Portal Profesionales</h4>
           <div className="space-x-2">
-            <NavLink to="/login" className={underlineActive}>
-              Iniciar Sesión
-            </NavLink>
+            {isLoadingLoginStatus ? (
+              <NavLink to="/login" className={underlineActive}>
+                Iniciar Sesión
+              </NavLink>
+            ) : !isLoadingLoginStatus && loginStatus?.isLoggedIn ? (
+              <NavLink
+                to={`/user/${loginStatus?.user?.id}`}
+                className={underlineActive}
+              >
+                Perfil
+              </NavLink>
+            ) : (
+              <NavLink to="/login" className={underlineActive}>
+                Iniciar Sesión
+              </NavLink>
+            )}
+
             <NavLink to="/register" className={underlineActive}>
               Registrarse
             </NavLink>

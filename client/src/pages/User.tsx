@@ -15,6 +15,10 @@ export const User = () => {
     `${API_URL}/areas`
   );
 
+  const { isLoading: isLoadingUser, data: user } = useGetData(
+    `${API_URL}/users/${userId}`
+  );
+
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -35,7 +39,7 @@ export const User = () => {
       });
   };
 
-  if (isLoadingProfessions || isLoadingAreas) {
+  if (isLoadingProfessions || isLoadingAreas || isLoadingUser) {
     return <div>Cargando...</div>;
   }
 
@@ -62,7 +66,12 @@ export const User = () => {
             <div className="flex space-x-2">
               <label>
                 Nombre
-                <input type="text" name="firstName" className="text-black" />
+                <input
+                  type="text"
+                  name="firstName"
+                  className="text-black"
+                  placeholder={user?.fisrtName ?? ""}
+                />
               </label>
               <label>
                 Apellido
