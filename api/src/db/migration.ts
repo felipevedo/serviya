@@ -1,8 +1,11 @@
-import { exec, getDb } from "."
+import { exec, getDb, run } from ".";
+import { User } from "../models/User";
 
 export const setupDb = async () => {
-  const db = await getDb()
-  await exec(db, `
+  const db = await getDb();
+  await exec(
+    db,
+    `
     DROP TABLE IF EXISTS Ranks;
     DROP TABLE IF EXISTS Areas;
     DROP TABLE IF EXISTS Professions;
@@ -32,9 +35,9 @@ export const setupDb = async () => {
       profileImg TEXT,
       profileDescription TEXT,
       phone TEXT,
-      ID_Profession INTEGER NOT NULL,
-      ID_Area INTEGER NOT NULL,
-      ID_Rank INTEGER NOT NULL,
+      ID_Profession INTEGER,
+      ID_Area INTEGER,
+      ID_Rank INTEGER,
       FOREIGN KEY (ID_Profession) REFERENCES Professions (ID_Profession),
       FOREIGN KEY (ID_Area) REFERENCES Areas (ID_Area),
       FOREIGN KEY (ID_Rank) REFERENCES Ranks (ID_Rank) 
@@ -63,7 +66,13 @@ export const setupDb = async () => {
     INSERT INTO Professions (name) VALUES ('Cristalero');
     INSERT INTO Professions (name) VALUES ('Obra blanca');
     INSERT INTO Professions (name) VALUES ('Techador');
-  `)
+  `
+  );
 
-  // INSERT INTO Users (firstName, lastName, password) VALUES ('Foo', 'Bar', 'Baz!#$');
-}
+  const encodedPassword = await User.encodePassword("123456");
+  await run(
+    db,
+    "INSERT INTO Users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)",
+    ["Super User", "", "test1@test.com", encodedPassword]
+  );
+};

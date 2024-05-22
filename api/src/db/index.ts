@@ -1,18 +1,17 @@
-import sqlite3, { Database, RunResult, Statement } from 'sqlite3'
+import sqlite3, { Database, RunResult, Statement } from "sqlite3";
 
 export function getDb(): Promise<Database> {
   return new Promise((resolve, reject) => {
-    sqlite3.verbose()
-    // ':memory:'
-    const db = new sqlite3.Database('./db/serviya.db', (err) => {
+    sqlite3.verbose();
+    const db = new sqlite3.Database("./db/serviya.db", (err) => {
       if (err) {
-        reject(err)
-        return
+        reject(err);
+        return;
       }
 
-      resolve(db)
-    })
-  })
+      resolve(db);
+    });
+  });
 }
 
 export function run(
@@ -23,24 +22,24 @@ export function run(
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (this: RunResult, err: Error) {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(this)
+        resolve(this);
       }
-    })
-  })
+    });
+  });
 }
 
 export function exec(db: Database, sql: string) {
   return new Promise((resolve, reject) => {
     db.exec(sql, function (this: Statement, err: Error | null) {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(this)
+        resolve(this);
       }
-    })
-  })
+    });
+  });
 }
 
 export function all<T = unknown>(
@@ -51,12 +50,12 @@ export function all<T = unknown>(
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows: T[]) => {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(rows)
+        resolve(rows);
       }
-    })
-  })
+    });
+  });
 }
 
 export function get<T = unknown>(
@@ -67,22 +66,22 @@ export function get<T = unknown>(
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row: T) => {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(row)
+        resolve(row);
       }
-    })
-  })
+    });
+  });
 }
 
 export function close(db: Database) {
   return new Promise<void>((resolve, reject) => {
     db.close((err) => {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve()
+        resolve();
       }
-    })
-  })
+    });
+  });
 }

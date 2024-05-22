@@ -1,26 +1,29 @@
+import { useNavigate } from "react-router-dom";
+import { API_URL } from "../utils/constants";
+import { SyntheticEvent } from "react";
+
 export const Register = () => {
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
-    console.log("e", e); // ###
 
-    const formElement = document.getElementById("register-form");
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData);
 
-    if (formElement) {
-      // e.target
-      const formData = new FormData(formElement as HTMLFormElement);
-
-      const data = Object.fromEntries(formData);
-
-      fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((res) => res.json())
-        .then((json) => console.log("json response", json));
-    }
+    fetch(`${API_URL}/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((json: Record<string, unknown>) => {
+        if (typeof json?.id !== "undefined") {
+          navigate(`/user/${json.id}`);
+        }
+      });
   };
 
   return (
@@ -29,7 +32,7 @@ export const Register = () => {
         ¡Unete a nuestra red de profesionales!
       </h2>
 
-      <form id="register-form" action="#" onSubmit={handleSubmit}>
+      <form action="#" onSubmit={handleSubmit}>
         <div className="flex flex-col max-w-[600px] mx-auto">
           <div className="flex">
             <input

@@ -1,9 +1,9 @@
-// @ts-nocheck
-export const ensureLoggedIn = (req, res, next) => {
+import { Handler } from "express";
+
+export const ensureLoggedIn: Handler = (req, res, next) => {
   if (req.isAuthenticated()) {
-    return next()
+    return next();
   } else {
-    // 401
-    res.send('Not Authorized')
+    res.status(401).json("Not Authorized");
   }
-}
+};

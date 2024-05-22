@@ -23,9 +23,6 @@ importers:
       '@types/passport-local':
         specifier: ^1.0.38
         version: 1.0.38
-      body-parser:
-        specifier: ^1.20.2
-        version: 1.20.2
       connect-sqlite3:
         specifier: ^0.9.15
         version: 0.9.15

@@ -1,44 +1,44 @@
 // @ts-nocheck
 import express from "express";
 import passport from "passport";
-import crypto from "crypto";
-import { getDb, get } from "../db";
-import { getRandomBytes } from "../utils";
+import { getDb, run } from "../db";
 import { User } from "../models/User";
 import LocalStrategy from "passport-local";
 
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
-    console.log("start auth", { username, password });
-    return cb(null, { id: 123, username: "foo" });
+    const db = await getDb();
 
-    // const db = await getDb()
+    db.get(
+      "SELECT * FROM Users WHERE email = ?",
+      [username],
+      async function (err, row) {
+        console.log("doing auth", { err, row });
+        if (err) {
+          return cb(err);
+        }
+        if (!row) {
+          return cb(null, false, {
+            message: "Incorrect username or password.",
+          });
+        }
 
-    // // await get(db, 'SELECT * FROM Users WHERE username = ?')
-    // db.get('SELECT * FROM Users WHERE username = ?', [ username ], async function(err, row) {
-    //   console.log('here')
-    //   if (err) { return cb(err); }
-    //   if (!row) { return cb(null, false, { message: 'Incorrect username or password.' }); }
+        const { salt, hashedPassword } = User.decodePassword(row.password);
+        const hashedRequestPassword = await User.hashPassword(password, salt);
+        const passwordToValidate = hashedRequestPassword.toString("utf-8");
 
-    //   console.log('row', row)
-    //   // return cb(null, row)
-
-    //   // const { salt, hashedPassword } = User.decodePassword(row.password)
-    //   // const passwordBuffer = Buffer.from(hashedPassword, 'utf-8');
-    //   // const hashedRequestPassword = await User.hashPassword(password, salt)
-
-    //   // if (!crypto.timingSafeEqual(passwordBuffer, hashedRequestPassword)) {
-    //   //   return cb(null, false, { message: 'Incorrect username or password.' });
-    //   // }
-
-    //   return cb(null, row);
-    // });
+        if (passwordToValidate === hashedPassword) {
+          console.log("passwords are equal");
+          return cb(null, row);
+        }
+      }
+    );
   })
 );
 
 passport.serializeUser(function (user, cb) {
   process.nextTick(function () {
-    cb(null, { id: user.id, username: user.username });
+    cb(null, { id: user.ID_User, username: user.email });
   });
 });
 
@@ -49,16 +49,12 @@ passport.deserializeUser(function (user, cb) {
 });
 
 const router = express.Router();
-router.post("/register", (req, res) => {
-  console.log("register was hit", req.body);
-  res.json({ message: "any body" }); // ### make sure you're using json all over
-});
 
 router.post("/login", passport.authenticate("local"), (req, res) => {
+  console.clear();
   console.log("[req.session] ", req.session);
   console.log("[req.user] ", req.user);
-  console.log("[req.headers] ", req.headers);
-  res.send("/login respondiendo");
+  res.json({ message: "user is logged in", id: req.session.passport.user.id });
 });
 
 router.post("/logout", function (req, res, next) {
@@ -70,26 +66,33 @@ router.post("/logout", function (req, res, next) {
   });
 });
 
-router.post("/signup", function (req, res, next) {
-  // var salt = crypto.randomBytes(16);
-  // crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-  //   if (err) { return next(err); }
-  //   db.run('INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
-  //     req.body.username,
-  //     hashedPassword,
-  //     salt
-  //   ], function(err) {
-  //     if (err) { return next(err); }
-  //     var user = {
-  //       id: this.lastID,
-  //       username: req.body.username
-  //     };
-  //     req.login(user, function(err) {
-  //       if (err) { return next(err); }
-  //       res.redirect('/');
-  //     });
-  //   });
-  // });
+router.post("/signup", async function (req, res, next) {
+  const { firstName, lastName, email, password } = req.body;
+  const sanitizedLastName = lastName ?? "";
+  const encodedPassword = await User.encodePassword(password);
+
+  const db = await getDb();
+  const { lastID } = await run(
+    db,
+    "INSERT INTO Users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)",
+    [firstName, sanitizedLastName, email, encodedPassword]
+  );
+  const newUser = {
+    id: lastID,
+    firstName,
+    lastName: sanitizedLastName,
+    email,
+  };
+
+  req.login(newUser, function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.json({
+      message: "Registered and logged user in",
+      id: newUser.id,
+    });
+  });
 });
 
 export default router;
