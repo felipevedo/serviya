@@ -6,3 +6,5 @@
 api/db/**
 
 *.md
+
+api/uploads/*

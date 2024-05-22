@@ -8,12 +8,12 @@ import passport from "passport";
 import session from "express-session";
 import connectSqlite from "connect-sqlite3";
 import { setupDb } from "./db/migration";
-import { ensureLoggedIn } from "./middlewares/ensureLoggedIn";
 import cors from "cors";
 
 const app = express();
 const port = 3000;
 
+app.use("/public", express.static("uploads"));
 app.use(
   cors({
     origin: "http://localhost:5173",

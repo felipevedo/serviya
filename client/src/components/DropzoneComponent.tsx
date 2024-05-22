@@ -7,7 +7,7 @@ type DropzoneComponentProps = {
 };
 
 const DropzoneComponent = ({ setDropzoneFile }: DropzoneComponentProps) => {
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState();
   const onDrop = useCallback((acceptedFiles) => {
     const mainFile = acceptedFiles[0];
 
@@ -16,7 +16,7 @@ const DropzoneComponent = ({ setDropzoneFile }: DropzoneComponentProps) => {
       console.log("RESULT", reader.result);
 
       Object.assign(mainFile, { preview: reader.result });
-      setFiles([mainFile]);
+      setFile(mainFile);
     };
 
     reader.readAsDataURL(mainFile);
@@ -30,23 +30,22 @@ const DropzoneComponent = ({ setDropzoneFile }: DropzoneComponentProps) => {
   });
 
   useEffect(() => {
-    setDropzoneFile(files[0]);
-  }, [files]);
+    setDropzoneFile(file);
+  }, [file]);
 
   // console.log("isDragActive", isDragActive); // ### wil be used for styling
-
-  const fileList = files.map((file) => (
-    <li key={file.name}>
-      <img src={file.preview} alt={file.name} />
-      <span>{file.name}</span>
-    </li>
-  ));
 
   return (
     <div {...getRootProps()}>
       <input {...getInputProps()} />
       <p>Drag and drop your files here, or click to select files</p>
-      <ul>{fileList}</ul>
+
+      {file ? (
+        <div>
+          <img src={file.preview} alt={file.name} />
+          <span>{file.name}</span>
+        </div>
+      ) : null}
     </div>
   );
 };

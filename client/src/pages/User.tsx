@@ -24,11 +24,23 @@ export const User = () => {
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData);
 
+    if (dropzoneFile) {
+      const profileImgFormData = new FormData();
+      profileImgFormData.set("file", dropzoneFile);
+
+      fetch(`${API_URL}/users/${userId}/profileImg`, {
+        method: "POST",
+        credentials: "include",
+        body: profileImgFormData,
+      });
+    }
+
     fetch(`${API_URL}/users/${userId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(data),
     })
       .then((res) => (res.ok ? res.json() : {}))
