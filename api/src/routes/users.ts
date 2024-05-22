@@ -15,12 +15,16 @@ router.get("/users/:id", async function (req, res) {
   const userId = parseInt(id);
   if (!isNaN(userId)) {
     const db = await getDb();
-    const user = await get(db, `SELECT * FROM Users WHERE ID_User = ?`, []);
+    const user = await get(db, `SELECT * FROM Users WHERE ID_User = ?`, [
+      userId,
+    ]);
 
-    res.json({ data: user });
-  } else {
-    res.json({ message: "user not found" });
+    if (user) {
+      return res.json({ data: user });
+    }
   }
+
+  res.json({ message: "user not found" });
 });
 
 router.put("/users/:id", async function (req, res) {
