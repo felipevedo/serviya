@@ -1,6 +1,7 @@
 // @ts-nocheck
 import express from "express";
 import { all, getDb, close, run, get } from "../db";
+import { ensureLoggedIn } from "../middlewares/ensureLoggedIn";
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.get("/users", async function (req, res) {
   res.json({ data: users });
 });
 
-router.get("/users/:id", async function (req, res) {
+router.get("/users/:id", ensureLoggedIn, async function (req, res) {
   const { id } = req.params;
   const userId = parseInt(id);
   if (!isNaN(userId)) {
@@ -45,8 +46,10 @@ router.put("/users/:id", async function (req, res) {
       console.log("will update this user", user);
 
       // strip out all empty
-      const updateObj = Object.values(req.body).filter((value) => !!value);
-      const fullUser = Object.assign(user, updateObj);
+      const updateObj = Object.entries(req.body).filter(
+        ([key, value]) => !!value
+      );
+      const fullUser = Object.assign(user, Object.fromEntries(updateObj));
       const sqlParams = [
         fullUser.firstName,
         fullUser.lastName,
@@ -54,11 +57,13 @@ router.put("/users/:id", async function (req, res) {
         fullUser.profileImg,
         fullUser.profileDescription,
         fullUser.phone,
-        fullUser.ID_Profession,
-        fullUser.ID_Area,
-        fullUser.ID_Rank,
+        parseInt(fullUser.ID_Profession),
+        parseInt(fullUser.ID_Area),
+        parseInt(fullUser.ID_Rank),
         userId,
       ];
+
+      console.log("to this fullUser", fullUser);
 
       const sql = `
       UPDATE Users

@@ -39,6 +39,9 @@ export const User = () => {
       });
   };
 
+  const [useDefaultProfession, setUseDefaultProfession] = useState(true);
+  const [useDefaultArea, setUseDefaultArea] = useState(true);
+
   if (isLoadingProfessions || isLoadingAreas || isLoadingUser) {
     return <div>Cargando...</div>;
   }
@@ -56,6 +59,7 @@ export const User = () => {
             <textarea
               className="text-black"
               name="profileDescription"
+              placeholder={user?.profileDescription || ""}
             ></textarea>
           </div>
         </div>
@@ -70,23 +74,42 @@ export const User = () => {
                   type="text"
                   name="firstName"
                   className="text-black"
-                  placeholder={user?.fisrtName ?? ""}
+                  placeholder={user?.firstName || ""}
                 />
               </label>
               <label>
                 Apellido
-                <input type="text" name="lastName" className="text-black" />
+                <input
+                  type="text"
+                  name="lastName"
+                  className="text-black"
+                  placeholder={user?.lastName || ""}
+                />
               </label>
             </div>
 
             <div className="flex space-x-2">
               <label>
                 Teléfono
-                <input type="text" name="phone" className="text-black" />
+                <input
+                  type="text"
+                  name="phone"
+                  className="text-black"
+                  placeholder={user?.phone || ""}
+                />
               </label>
               <label>
                 Profesión
-                <select className="text-black" name="profession">
+                <select
+                  className="text-black"
+                  name="ID_Profession"
+                  value={
+                    useDefaultProfession ? user?.ID_Profession || "" : undefined
+                  }
+                  onChange={() => {
+                    setUseDefaultProfession(false);
+                  }}
+                >
                   {professions?.map(({ ID_Profession, name }) => (
                     <option key={ID_Profession} value={ID_Profession}>
                       {name}
@@ -98,7 +121,14 @@ export const User = () => {
 
             <label>
               Area donde trabaja:
-              <select className="text-black" name="area">
+              <select
+                className="text-black"
+                name="ID_Area"
+                value={useDefaultArea ? user?.ID_Area || "" : undefined}
+                onChange={() => {
+                  setUseDefaultArea(false);
+                }}
+              >
                 {areas?.map(({ ID_Area, name }) => (
                   <option key={ID_Area} value={ID_Area}>
                     {name}

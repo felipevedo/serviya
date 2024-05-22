@@ -1,13 +1,26 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { useGetData } from "./hooks/useGetData";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { API_URL } from "./utils/constants";
+import { useEffect, useState } from "react";
 
 export const Layout = () => {
-  const { isLoading: isLoadingLoginStatus, data } = useGetData(
-    `${API_URL}/login/status`
-  );
-  const loginStatus = data[0];
+  const location = useLocation();
+  const [loginStatus, setLoginStatus] = useState();
+  useEffect(() => {
+    fetch(`${API_URL}/login/status`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((json) => setLoginStatus(json.data[0]));
+  }, [location]);
+
   const underlineActive = ({ isActive }) => (isActive ? "underline" : "");
+
+  const handleLogout = () => {
+    fetch(`${API_URL}/logout`, { method: "POST", credentials: "include" }).then(
+      (res) => {
+        console.log("logout res", res);
+        window.location.reload();
+      }
+    );
+  };
 
   return (
     <div>
@@ -30,11 +43,7 @@ export const Layout = () => {
         <div className="justify-self-end flex flex-col items-center">
           <h4 className="underline">Portal Profesionales</h4>
           <div className="space-x-2">
-            {isLoadingLoginStatus ? (
-              <NavLink to="/login" className={underlineActive}>
-                Iniciar Sesión
-              </NavLink>
-            ) : !isLoadingLoginStatus && loginStatus?.isLoggedIn ? (
+            {loginStatus?.isLoggedIn ? (
               <NavLink
                 to={`/user/${loginStatus?.user?.id}`}
                 className={underlineActive}
@@ -47,9 +56,13 @@ export const Layout = () => {
               </NavLink>
             )}
 
-            <NavLink to="/register" className={underlineActive}>
-              Registrarse
-            </NavLink>
+            {loginStatus?.isLoggedIn ? (
+              <button onClick={handleLogout}>Cerrar Sesión</button>
+            ) : (
+              <NavLink to="/register" className={underlineActive}>
+                Registrarse
+              </NavLink>
+            )}
           </div>
         </div>
       </header>
