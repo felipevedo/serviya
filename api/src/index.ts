@@ -14,7 +14,13 @@ import cors from "cors";
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -26,9 +32,16 @@ const SQLiteStore = connectSqlite(session);
 app.use(
   session({
     secret: "servi Ya app",
+    name: "session_serviya",
     resave: false,
     saveUninitialized: false,
     store: new SQLiteStore({ db: "sessions.db", dir: "./db" }),
+    cookie: {
+      sameSite: false,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+      httpOnly: true,
+    },
   })
 );
 
