@@ -33,30 +33,57 @@ export const Register = () => {
       </h2>
 
       <form action="#" onSubmit={handleSubmit}>
-        <div className="flex flex-col max-w-[600px] mx-auto">
-          <div className="flex">
-            <input
-              type="text"
-              placeholder="Nombre"
-              name="firstName"
-              required
-            ></input>
-            <input type="text" placeholder="Apellido" name="lastName"></input>
-          </div>
-          <input
-            type="email"
-            placeholder="Correo"
-            name="email"
-            required
-          ></input>
-          <input
-            type="password"
-            placeholder="Contraseña"
-            name="password"
-            required
-          ></input>
+        <div className="flex flex-col max-w-[600px] mx-auto text-white space-y-4">
+          <div className="flex space-x-4 w-full">
+            <div className="flex flex-col w-full">
+              <label htmlFor="firstName">Nombre:</label>
+              <input
+                id="firstName"
+                type="text"
+                name="firstName"
+                className="text-black"
+              />
+            </div>
 
-          <button className="bg-orange-500 text-white" type="submit">
+            <div className="flex flex-col w-full">
+              <label htmlFor="lastName">Apellido:</label>
+              <input
+                id="lastName"
+                type="text"
+                name="lastName"
+                className="text-black"
+              />
+            </div>
+          </div>
+
+          <div className="flex space-x-4 w-full">
+            <div className="flex flex-col w-full">
+              <label htmlFor="email">Correo:</label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                className="text-black"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col w-full">
+              <label htmlFor="password">Contraseña:</label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                className="text-black"
+                required
+              />
+            </div>
+          </div>
+
+          <button
+            className="bg-orange-500 text-white rounded py-2 font-bold"
+            type="submit"
+          >
             Registrarse
           </button>
         </div>

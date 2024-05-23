@@ -19,6 +19,10 @@ export const User = () => {
     `${API_URL}/users/${userId}`
   );
 
+  const defaultFile = user?.profileImg
+    ? ({ preview: `${API_URL}${user?.profileImg}` } as File)
+    : null;
+
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -61,80 +65,126 @@ export const User = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex space-x-4 text-white">
-        <div className="w-[450px] bg-stone-600 flex flex-col p-2">
-          Imagen de perfil y otros
-          <div>
-            <DropzoneComponent setDropzoneFile={setDropzoneFile} />
-          </div>
-          <div>
-            <h3 className="font-xxl text-orange-500">About</h3>
+        {/* Foto de perfil y descripcion */}
+        <div className="w-[450px] bg-stone-600 flex flex-col items-center p-8">
+          <DropzoneComponent
+            setDropzoneFile={setDropzoneFile}
+            defaultFile={defaultFile}
+          />
+          <div className="w-full">
+            <h3 className="text-xl text-orange-500 py-4">About</h3>
             <textarea
-              className="text-black"
+              className="text-black w-full"
               name="profileDescription"
               placeholder={user?.profileDescription || ""}
+              rows={4}
             ></textarea>
           </div>
         </div>
 
-        <div className="flex flex-col bg-stone-600 p-2">
-          <div className="flex flex-col">
-            <h3 className="font-xxl text-orange-500">Información personal</h3>
-            <div className="flex space-x-2">
-              <label>
-                Nombre
-                <input
-                  type="text"
-                  name="firstName"
-                  className="text-black"
-                  placeholder={user?.firstName || ""}
-                />
-              </label>
-              <label>
-                Apellido
-                <input
-                  type="text"
-                  name="lastName"
-                  className="text-black"
-                  placeholder={user?.lastName || ""}
-                />
-              </label>
+        <div className="bg-stone-600 w-full">
+          <div className="flex flex-col p-8 items-start">
+            {/* Información personal */}
+            <div className="flex flex-col w-full">
+              <h3 className="text-xl text-orange-500 py-4">
+                Información Personal
+              </h3>
+              <div className="flex space-x-4 w-full">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="firstName">Nombre:</label>
+                  <input
+                    id="firstName"
+                    type="text"
+                    name="firstName"
+                    className="text-black"
+                    placeholder={user?.firstName || ""}
+                  />
+                </div>
+
+                <div className="flex flex-col w-full">
+                  <label htmlFor="lastName">Apellido:</label>
+                  <input
+                    id="lastName"
+                    type="text"
+                    name="lastName"
+                    className="text-black"
+                    placeholder={user?.lastName || ""}
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-4 w-full">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="phone">Teléfono:</label>
+                  <input
+                    id="phone"
+                    type="text"
+                    name="phone"
+                    className="text-black"
+                    placeholder={user?.phone || ""}
+                  />
+                </div>
+
+                <div className="flex flex-col w-full">
+                  <label htmlFor="ID_Profession">Profesión:</label>
+                  <select
+                    id="ID_Profession"
+                    className="text-black block w-full"
+                    name="ID_Profession"
+                    value={
+                      useDefaultProfession
+                        ? user?.ID_Profession || ""
+                        : undefined
+                    }
+                    onChange={() => {
+                      setUseDefaultProfession(false);
+                    }}
+                  >
+                    {professions?.map(({ ID_Profession, name }) => (
+                      <option key={ID_Profession} value={ID_Profession}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div className="flex space-x-2">
-              <label>
-                Teléfono
-                <input
-                  type="text"
-                  name="phone"
-                  className="text-black"
-                  placeholder={user?.phone || ""}
-                />
-              </label>
-              <label>
-                Profesión
-                <select
-                  className="text-black"
-                  name="ID_Profession"
-                  value={
-                    useDefaultProfession ? user?.ID_Profession || "" : undefined
-                  }
-                  onChange={() => {
-                    setUseDefaultProfession(false);
-                  }}
-                >
-                  {professions?.map(({ ID_Profession, name }) => (
-                    <option key={ID_Profession} value={ID_Profession}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+            {/* Información Profesional */}
+            <div className="flex flex-col mt-5 w-full">
+              <h3 className="text-xl text-orange-500 py-4">
+                Información Profesional
+              </h3>
+              <div className="flex space-x-4 w-full">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="pricePerHour">Precio por hora:</label>
+                  <input
+                    id="pricePerHour"
+                    type="number"
+                    name="pricePerHour"
+                    className="text-black"
+                    placeholder={user?.pricePerHour || ""}
+                  />
+                </div>
+
+                <div className="flex flex-col w-full">
+                  <label htmlFor="yearsOfExperience">Años de experiencia</label>
+                  <input
+                    id="yearsOfExperience"
+                    type="number"
+                    name="yearsOfExperience"
+                    className="text-black"
+                    placeholder={user?.yearsOfExperience || ""}
+                  />
+                </div>
+              </div>
             </div>
 
-            <label>
-              Area donde trabaja:
+            <div className="flex flex-col mt-4 w-full">
+              <label htmlFor="ID_Area">Municipio donde prestas servicio:</label>
               <select
-                className="text-black"
+                id="ID_Area"
+                className="text-black w-full"
                 name="ID_Area"
                 value={useDefaultArea ? user?.ID_Area || "" : undefined}
                 onChange={() => {
@@ -147,19 +197,20 @@ export const User = () => {
                   </option>
                 ))}
               </select>
-            </label>
-          </div>
+            </div>
 
-          <div className="flex justify-end space-x-4 pt-5">
-            <button className="text-orange-500 bg-white border border-orange-500 py-2 px-4 rounded">
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="text-white bg-orange-500 border border-orange-500 py-2 px-4 rounded"
-            >
-              Actualizar
-            </button>
+            {/* Buttons */}
+            <div className="flex self-end space-x-4 pt-10">
+              <button className="text-orange-500 bg-white border border-orange-500 py-2 px-4 rounded">
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="text-white bg-orange-500 border border-orange-500 py-2 px-4 rounded"
+              >
+                Actualizar
+              </button>
+            </div>
           </div>
         </div>
       </div>

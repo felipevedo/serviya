@@ -49,11 +49,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.listen(port, async () => {
-  try {
-    await setupDb();
-  } catch (e) {
-    console.log("error setting up DB");
-  }
+  // try {
+  //   await setupDb();
+  // } catch (e) {
+  //   console.log("error setting up DB");
+  // }
 
   console.log(`ServiYa listening on port ${port}`);
 });

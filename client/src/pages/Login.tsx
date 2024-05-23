@@ -29,22 +29,36 @@ export const Login = () => {
 
   return (
     <div className="bg-stone-600 h-full p-2">
-      <form action="#" onSubmit={handleSubmit}>
-        <div className="flex flex-col max-w-[600px] mx-auto">
-          <input
-            type="email"
-            placeholder="Correo"
-            name="username"
-            required
-          ></input>
-          <input
-            type="password"
-            placeholder="Contraseña"
-            name="password"
-            required
-          ></input>
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col max-w-[300px] mx-auto text-white space-y-4 pt-10">
+          <div className="flex flex-col w-full">
+            <label htmlFor="email">Correo:</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Correo"
+              name="username"
+              className="text-black"
+              required
+            />
+          </div>
 
-          <button className="bg-orange-500 text-white" type="submit">
+          <div className="flex flex-col w-full">
+            <label htmlFor="password">Contraseña:</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Contraseña"
+              name="password"
+              className="text-black"
+              required
+            />
+          </div>
+
+          <button
+            className="bg-orange-500 text-white  py-2 font-bold"
+            type="submit"
+          >
             Iniciar sesión
           </button>
         </div>

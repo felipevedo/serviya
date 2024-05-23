@@ -35,6 +35,8 @@ export const setupDb = async () => {
       profileImg TEXT,
       profileDescription TEXT,
       phone TEXT,
+      yearsOfExperience INTEGER,
+      pricePerHour INTEGER,
       ID_Profession INTEGER,
       ID_Area INTEGER,
       ID_Rank INTEGER,

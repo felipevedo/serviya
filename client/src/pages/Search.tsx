@@ -1,3 +1,4 @@
+import { UserCard } from "../components/UserCard";
 import { useGetData } from "../hooks/useGetData";
 import { API_URL } from "../utils/constants";
 
@@ -11,15 +12,9 @@ export const Search = () => {
   }
 
   return (
-    <div>
+    <div className="p-8">
       {users.map((user) => (
-        <div className="mb-5">
-          <p>{user?.firstName}</p>
-          <p>{user?.lastName}</p>
-          <p>{user?.email}</p>
-          <p>{user?.phone}</p>
-          <p>{user?.profileDescription}</p>
-        </div>
+        <UserCard key={user?.ID_User} user={user} />
       ))}
     </div>
   );
